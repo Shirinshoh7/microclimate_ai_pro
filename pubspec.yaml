@@ -9,31 +9,44 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
-  # UI Components
+
+  flutter_localizations:
+    sdk: flutter
+
+  easy_localization: ^3.0.0
+
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
-  
-  # Charts & Visualization
   fl_chart: ^0.65.0
-  
-  # HTTP & Networking
   http: ^1.1.0
-  
-  # State Management
   provider: ^6.1.1
-  
-  # Local Storage
   shared_preferences: ^2.2.2
-  
-    
-  # Utils
-  intl: ^0.18.1
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0 # сплеш
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/translations/
+    - assets/images/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/icon.png"
+  web:
+    generate: true
+    image_path: "assets/images/icon.png"
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: "assets/images/icon.png"
+  android_12:
+    image: "assets/images/icon.png"
+    color: "#FFFFFF"

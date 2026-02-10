@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../providers/climate_provider.dart';
 import '../models/climate_models.dart';
 
@@ -15,8 +16,10 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
   late TextEditingController _nameController;
   late TextEditingController _tempMinController;
   late TextEditingController _tempMaxController;
+  late TextEditingController _humidityMinController;
   late TextEditingController _humidityMaxController;
   late TextEditingController _co2MaxController;
+  late TextEditingController _luxMaxController;
 
   ClimateProfile? _selectedPreset;
 
@@ -26,8 +29,19 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
     _nameController = TextEditingController();
     _tempMinController = TextEditingController();
     _tempMaxController = TextEditingController();
+    _humidityMinController = TextEditingController();
     _humidityMaxController = TextEditingController();
     _co2MaxController = TextEditingController();
+    _luxMaxController = TextEditingController();
+
+    // Установите значения по умолчанию
+    _nameController.text = "my_profile".tr();
+    _tempMinController.text = "20.0";
+    _tempMaxController.text = "25.0";
+    _humidityMinController.text = "40.0";
+    _humidityMaxController.text = "60.0";
+    _co2MaxController.text = "1000";
+    _luxMaxController.text = "500";
 
     // Load active profile
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -43,8 +57,10 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
     _nameController.dispose();
     _tempMinController.dispose();
     _tempMaxController.dispose();
+    _humidityMinController.dispose();
     _humidityMaxController.dispose();
     _co2MaxController.dispose();
+    _luxMaxController.dispose();
     super.dispose();
   }
 
@@ -54,8 +70,10 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
       _nameController.text = profile.name;
       _tempMinController.text = profile.tempMin.toString();
       _tempMaxController.text = profile.tempMax.toString();
+      _humidityMinController.text = profile.humidityMin.toString();
       _humidityMaxController.text = profile.humidityMax.toString();
       _co2MaxController.text = profile.co2Max.toString();
+      _luxMaxController.text = profile.luxMax.toString();
     });
   }
 
@@ -66,16 +84,18 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
       name: _nameController.text,
       tempMin: double.parse(_tempMinController.text),
       tempMax: double.parse(_tempMaxController.text),
+      humidityMin: double.parse(_humidityMinController.text),
       humidityMax: double.parse(_humidityMaxController.text),
       co2Max: int.parse(_co2MaxController.text),
+      luxMax: double.parse(_luxMaxController.text),
     );
 
     try {
-      await context.read<ClimateProvider>().updateProfile(profile);
+      context.read<ClimateProvider>().updateProfile(profile);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Профиль успешно сохранён'),
+          SnackBar(
+            content: Text('profile_saved_successfully'.tr()),
             backgroundColor: Colors.green,
           ),
         );
@@ -84,7 +104,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка: $e'),
+            content: Text('${'error'.tr()}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -116,7 +136,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'ПРОФИЛИ',
+          'profiles'.tr(),
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -124,7 +144,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Настройка параметров микроклимата',
+          'manage_profiles'.tr(),
           style: TextStyle(
             color: Colors.grey[600],
             fontSize: 14,
@@ -156,7 +176,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Выбрать готовый профиль',
+                  'select_preset_profile'.tr(),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -165,7 +185,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<ClimateProfile>(
-                  initialValue: _selectedPreset,
+                  value: _selectedPreset,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[50],
@@ -192,16 +212,16 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                 ),
                 const SizedBox(height: 24),
                 _buildTextField(
-                  'Название профиля',
+                  'profile_name'.tr(),
                   _nameController,
-                  validator: (v) => v!.isEmpty ? 'Введите название' : null,
+                  validator: (v) => v!.isEmpty ? 'profile_name_required'.tr() : null,
                 ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
                       child: _buildTextField(
-                        'Мин. Темп. (°C)',
+                        '${'temperature'.tr()} ${'min'.tr()} (°C)',
                         _tempMinController,
                         isNumber: true,
                       ),
@@ -209,7 +229,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _buildTextField(
-                        'Макс. Темп. (°C)',
+                        '${'temperature'.tr()} ${'max'.tr()} (°C)',
                         _tempMaxController,
                         isNumber: true,
                       ),
@@ -221,16 +241,37 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                   children: [
                     Expanded(
                       child: _buildTextField(
-                        'Макс. Влажность (%)',
-                        _humidityMaxController,
+                        '${'humidity'.tr()} ${'min'.tr()} (%)',
+                        _humidityMinController,
                         isNumber: true,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _buildTextField(
-                        'Макс. CO₂ (ppm)',
+                        '${'humidity'.tr()} ${'max'.tr()} (%)',
+                        _humidityMaxController,
+                        isNumber: true,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildTextField(
+                        '${'co2'.tr()} ${'max'.tr()} (ppm)',
                         _co2MaxController,
+                        isNumber: true,
+                        isInt: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildTextField(
+                        '${'light'.tr()} ${'max'.tr()} (${'lux'.tr()})',
+                        _luxMaxController,
                         isNumber: true,
                         isInt: true,
                       ),
@@ -251,9 +292,9 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Сохранить и применить',
-                      style: TextStyle(
+                    child: Text(
+                      'save_profile'.tr(),
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
@@ -304,12 +345,12 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
           ),
           validator: validator ??
               (v) {
-                if (v == null || v.isEmpty) return 'Обязательно';
+                if (v == null || v.isEmpty) return 'required_field'.tr();
                 if (isNumber) {
                   if (isInt) {
-                    if (int.tryParse(v) == null) return 'Неверный формат';
+                    if (int.tryParse(v) == null) return 'invalid_format'.tr();
                   } else {
-                    if (double.tryParse(v) == null) return 'Неверный формат';
+                    if (double.tryParse(v) == null) return 'invalid_format'.tr();
                   }
                 }
                 return null;

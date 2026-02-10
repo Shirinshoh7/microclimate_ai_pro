@@ -171,6 +171,21 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
+                  child: ClimateCard(
+                    title: 'Освещенность',
+                    value: '${data.lux.toStringAsFixed(0)} lx',
+                    icon: Icons.light_mode_rounded,
+                    color: Colors.amber,
+                    isDanger: provider.activeProfile != null &&
+                        data.lux > (provider.activeProfile!.luxMax),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -213,6 +228,8 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(width: 12),
+                const Expanded(child: SizedBox.shrink()),
               ],
             ),
           ],
@@ -350,6 +367,25 @@ class DashboardScreen extends StatelessWidget {
                         barWidth: 3,
                         dotData: const FlDotData(show: false),
                       ),
+                      // Lux line
+                      LineChartBarData(
+                        spots: provider.history
+                            .asMap()
+                            .entries
+                            .map((e) => FlSpot(
+                                  e.key.toDouble(),
+                                  e.value.lux,
+                                ))
+                            .toList(),
+                        isCurved: true,
+                        color: Colors.amber,
+                        barWidth: 2,
+                        dotData: const FlDotData(show: false),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: Colors.amber.withOpacity(0.05),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -361,6 +397,8 @@ class DashboardScreen extends StatelessWidget {
                   _buildChartLegend('Температура', Colors.red),
                   const SizedBox(width: 20),
                   _buildChartLegend('Влажность', Colors.blue),
+                  const SizedBox(width: 20),
+                  _buildChartLegend('Освещенность', Colors.amber),
                 ],
               ),
             ],

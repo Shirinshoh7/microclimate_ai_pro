@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'dashboard_screen.dart';
 import 'prediction_screen.dart';
 import 'history_screen.dart';
@@ -48,26 +49,26 @@ class _HomeScreenState extends State<HomeScreen> {
           unselectedItemColor: Colors.grey,
           selectedFontSize: 12,
           unselectedFontSize: 11,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_rounded),
-              label: 'Дашборд',
+              icon: const Icon(Icons.dashboard_rounded),
+              label: 'dashboard'.tr(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.auto_graph_rounded),
-              label: 'ИИ Прогноз',
+              icon: const Icon(Icons.auto_graph_rounded),
+              label: 'prediction'.tr(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.history_rounded),
-              label: 'История',
+              icon: const Icon(Icons.history_rounded),
+              label: 'history'.tr(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.tune_rounded),
-              label: 'Профили',
+              icon: const Icon(Icons.tune_rounded),
+              label: 'profiles'.tr(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings_rounded),
-              label: 'Настройки',
+              icon: const Icon(Icons.settings_rounded),
+              label: 'settings'.tr(),
             ),
           ],
         ),

@@ -180,16 +180,29 @@ class ClimateProvider extends ChangeNotifier {
     notifyListeners();
   }
   
-  Future<void> updateProfile(ClimateProfile profile) async {
-    try {
-      await _apiService.updateProfile(profile);
-      await loadProfiles();
-      await setActiveProfile(profile);
-      _addLog('Profile updated: ${profile.name}', 'System');
-    } catch (e) {
-      _addLog('Failed to update profile: $e', 'Error');
-      rethrow;
+  // add / update / delete profiles
+  void addProfile(ClimateProfile profile) {
+    _profiles.add(profile);
+    _addLog('system', 'Profile created: ${profile.name}');
+    notifyListeners();
+  }
+
+  void updateProfile(ClimateProfile profile) {
+    final index = _profiles.indexWhere((p) => p.id == profile.id);
+    if (index != -1) {
+      _profiles[index] = profile;
+      _addLog('system', 'Profile updated: ${profile.name}');
+      notifyListeners();
     }
+  }
+
+  void deleteProfile(ClimateProfile profile) {
+    _profiles.removeWhere((p) => p.id == profile.id);
+    if (_activeProfile?.id == profile.id) {
+      _activeProfile = _profiles.isNotEmpty ? _profiles.first : null;
+    }
+    _addLog('system', 'Profile deleted: ${profile.name}');
+    notifyListeners();
   }
   
   void setForecastMinutes(int minutes) {
